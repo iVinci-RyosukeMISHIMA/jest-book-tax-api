@@ -1,6 +1,7 @@
 import calcRetirementIncomeDeduction from "../calcTax";
 
-test.each`
+describe("退職所得控除額",()=> {
+    test.each`
     yearsServiced | isDisabled | expected
     ${1}          | ${false}   | ${800_000}
     ${2}          | ${false}   | ${800_000}
@@ -16,8 +17,9 @@ test.each`
     ${20}          | ${true}   | ${9000_000}
     ${21}          | ${true}   | ${9700_000}
     ${30}          | ${true}   | ${16000_000}
-`("退職所得控除額", ({ yearsServiced, isDisabled, expected }) => {
+`(`勤続年数：$yearsServiced, 障害が起因：$isDisabled, 期待値：$expected`, ({ yearsServiced, isDisabled, expected }) => {
     const deduction = calcRetirementIncomeDeduction({yearsServiced, isDisabled})
     expect(deduction).toBe(expected)
     }
 )
+})
