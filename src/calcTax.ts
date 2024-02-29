@@ -12,6 +12,13 @@ type calcTaxationTargetAmountInput = {
     deduction: number
 }
 
+type calcIncomeTaxOfRetirementIncome = {
+    yearsServiced: number,
+    isDisabled: boolean,
+    retirementIncome: number,
+    isExecutiveOfficer: boolean,
+}
+
 export const calcRetirementIncomeDeduction = (input: calcRetirementIncomeDeductionInput) => {
     let deduction;
     const deductionUntil20years = 400_000;
@@ -76,6 +83,8 @@ export const calcBaseIncomeAmount = (taxationTargetAmount: number) => {
         return taxationTargetAmount * taxGroups[5].taxRate - taxGroups[5].fixedDeduction;
     } else if (40_000_000 <= taxationTargetAmount) {
         return taxationTargetAmount * taxGroups[6].taxRate - taxGroups[6].fixedDeduction;
+    } else {
+        return -1;
     }
 }
 
@@ -84,4 +93,29 @@ export const calcWithHoldingTax = (calcBaseIncomeAmount: number) => {
     const coefficient = 1021;
     const withHoldingTax = Math.floor(calcBaseIncomeAmount * coefficient / 1000)
     return withHoldingTax;
+}
+
+//退職金の所得税算出
+export const calcIncomeTaxOfRetirementIncome = (input: calcIncomeTaxOfRetirementIncome) => {
+    const deduction = calcRetirementIncomeDeduction({
+        yearsServiced: input.yearsServiced,
+        isDisabled: input.isDisabled
+    })
+
+    const taxationTargetAmount = calcTaxationTargetAmount({
+        yearsServiced: input.yearsServiced,
+        retirementIncome: input.retirementIncome,
+        isExecutiveOfficer: input.isExecutiveOfficer,
+        deduction: deduction
+    })
+
+    const baseIncomeAmount = calcBaseIncomeAmount(taxationTargetAmount)
+    
+    const withHoldingTax = calcWithHoldingTax(baseIncomeAmount)
+
+    if (withHoldingTax !== -1) {
+        return withHoldingTax
+    } else {
+        throw new Error();
+    }
 }

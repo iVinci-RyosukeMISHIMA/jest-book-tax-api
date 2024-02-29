@@ -1,4 +1,4 @@
-import { calcRetirementIncomeDeduction, calcTaxationTargetAmount, calcBaseIncomeAmount, calcWithHoldingTax } from "../calcTax"
+import { calcRetirementIncomeDeduction, calcTaxationTargetAmount, calcBaseIncomeAmount, calcWithHoldingTax ,calcIncomeTaxOfRetirementIncome} from "../calcTax"
 
 describe("退職所得控除額", () => {
     describe("勤続年数が1年以下の場合", () => {
@@ -237,4 +237,22 @@ describe("源泉徴収税額（所得税）", () => {
             expect(withHoldingTax).toBe(expected)
         }
     )
+})
+
+describe("退職金の所得税", () => {
+    test.each`
+    yearsServiced | isDisabled | isExecutiveOfficer | retirementIncome | expected
+    ${5} | ${false} | ${false} | ${8_000_000} | ${482422}  
+    ${10} | ${false} | ${false} | ${8_000_000} | ${104652}  
+    ${5} | ${true} | ${false} | ${8_000_000} | ${278222}  
+    ${10} | ${true} | ${false} | ${8_000_000} | ${76575}  
+    ${5} | ${false} | ${true} | ${8_000_000} | ${788722}  
+    ${10} | ${false} | ${true} | ${8_000_000} | ${104652}  
+    ${5} | ${true} | ${true} | ${8_000_000} | ${584522}  
+    ${10} | ${true} | ${true} | ${8_000_000} | ${76575}  
+    `(`勤続年数：$yearsServiced, 障害が起因：$isDisabled, 役員等：$isExecutiveOfficer, 退職所得：$retirementIncome, 期待値：$expected`,
+        ({ yearsServiced, isDisabled, isExecutiveOfficer, retirementIncome, expected }) => { 
+        const taxAmount = calcIncomeTaxOfRetirementIncome({ yearsServiced, isDisabled, retirementIncome, isExecutiveOfficer })
+            expect(taxAmount).toBe(expected);
+    })
 })
