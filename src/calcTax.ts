@@ -1,15 +1,15 @@
 import { isDeepStrictEqual } from "util";
 
 type calcRetirementIncomeDeductionInput = {
-        yearsServiced: number,
-        isDisabled: boolean
+    yearsServiced: number,
+    isDisabled: boolean
 } 
 
 type calcTaxationTargetAmountInput = {
-        yearsServiced: number,
-        retirementIncome: number,
-        isExecutiveOfficer: boolean,
-        isDisabled: boolean
+    yearsServiced: number,
+    retirementIncome: number,
+    isExecutiveOfficer: boolean,
+    deduction: number
 }
 
 export const calcRetirementIncomeDeduction = (input: calcRetirementIncomeDeductionInput) => {
@@ -33,7 +33,7 @@ export const calcTaxationTargetAmount = (input: calcTaxationTargetAmountInput) =
     //対象金額
     let targetAmount;
     //退職所得 - 控除額
-    let diffIncomeAndDeduction = input.retirementIncome - calcRetirementIncomeDeduction({ yearsServiced: input.yearsServiced, isDisabled: input.isDisabled })
+    let diffIncomeAndDeduction = input.retirementIncome - input.deduction
     //(退職所得 - 控除額) <= 0円の場合
     if (diffIncomeAndDeduction <= 0) {
         return 0;
