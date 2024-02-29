@@ -1,4 +1,4 @@
-import { calcRetirementIncomeDeduction, calcTaxationTargetAmount, calcBaseIncomeAmount } from "../calcTax"
+import { calcRetirementIncomeDeduction, calcTaxationTargetAmount, calcBaseIncomeAmount, calcWithHoldingTax } from "../calcTax"
 
 describe("退職所得控除額", () => {
     describe("勤続年数が1年以下の場合", () => {
@@ -218,4 +218,23 @@ describe("基準所得金額", () => {
             }
         )
     })
+})
+
+describe("源泉徴収税額（所得税）", () => {
+    test.each`
+    baseIncomeAmount | expected
+    ${50} | ${51}
+    ${97_500} | ${99_547}
+    ${232_500} | ${237_382}
+    ${962500} | ${982712}
+    ${1434000} | ${1464114}
+    ${4_404_000} | ${4_496_484}
+    ${13_204_000} | ${13_481_284}
+    `(
+        `基準所得金額：$baseIncomeAmount`,
+        ({ baseIncomeAmount, expected }) => {
+            const withHoldingTax = calcWithHoldingTax(baseIncomeAmount);
+            expect(withHoldingTax).toBe(expected)
+        }
+    )
 })

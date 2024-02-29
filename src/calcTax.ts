@@ -78,3 +78,10 @@ export const calcBaseIncomeAmount = (taxationTargetAmount: number) => {
         return taxationTargetAmount * taxGroups[6].taxRate - taxGroups[6].fixedDeduction;
     }
 }
+
+//所得税の源泉徴収税額算出
+export const calcWithHoldingTax = (calcBaseIncomeAmount: number) => {
+    const coefficient = 1021;
+    const withHoldingTax = Math.floor(calcBaseIncomeAmount * coefficient / 1000)
+    return withHoldingTax;
+}
