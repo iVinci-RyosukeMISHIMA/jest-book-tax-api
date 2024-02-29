@@ -1,4 +1,4 @@
-import { calcRetirementIncomeDeduction, calcTaxationTargetAmount } from "../calcTax"
+import { calcRetirementIncomeDeduction, calcTaxationTargetAmount, calcBaseIncomeAmount } from "../calcTax"
 
 describe("退職所得控除額", () => {
     describe("勤続年数が1年以下の場合", () => {
@@ -117,5 +117,105 @@ describe("課税対象金額", () => {
                 })
             })
         })
+    })
+})
+
+describe("基準所得金額", () => {
+    describe("課税対象金額が1,000円 ~ 1,949,000円", () => {
+        test.each`
+        taxationTargetAmount | expected
+        ${1000} | ${50}
+        ${1_000_000} | ${50_000}
+        ${1_949_000} | ${97_450}
+        `(
+            `課税対象金額：$taxationTargetAmount, 期待値：$expected`,
+                ({taxationTargetAmount, expected})=> {
+                    const baseIncomeAmount = calcBaseIncomeAmount(taxationTargetAmount);
+                    expect(baseIncomeAmount).toBe(expected)
+            }
+        )
+    })
+    describe("課税対象金額が1,950,000円 ~ 3,299,000円", () => {
+        test.each`
+        taxationTargetAmount | expected
+        ${1_950_000} | ${97_500}
+        ${2_500_000} | ${152_500}
+        ${3_299_000} | ${232_400}
+        `(
+            `課税対象金額：$taxationTargetAmount, 期待値：$expected`,
+                ({taxationTargetAmount, expected})=> {
+                    const baseIncomeAmount = calcBaseIncomeAmount(taxationTargetAmount);
+                    expect(baseIncomeAmount).toBe(expected)
+            }
+        )
+    })
+    describe("課税対象金額が3,300,000円 ~ 6,949,000円", () => {
+        test.each`
+        taxationTargetAmount | expected
+        ${3_300_000} | ${232_500}
+        ${5_000_000} | ${572_500}
+        ${6_949_000} | ${962_300}
+        `(
+            `課税対象金額：$taxationTargetAmount, 期待値：$expected`,
+                ({taxationTargetAmount, expected})=> {
+                    const baseIncomeAmount = calcBaseIncomeAmount(taxationTargetAmount);
+                    expect(baseIncomeAmount).toBe(expected)
+            }
+        )
+    })
+    describe("課税対象金額が6,950,000円 ~ 8,999,000円", () => {
+        test.each`
+        taxationTargetAmount | expected
+        ${6_950_000} | ${962_500}
+        ${8_000_000} | ${1_204_000}
+        ${8_999_000} | ${1_433_770}
+        `(
+            `課税対象金額：$taxationTargetAmount, 期待値：$expected`,
+                ({taxationTargetAmount, expected})=> {
+                    const baseIncomeAmount = calcBaseIncomeAmount(taxationTargetAmount);
+                    expect(baseIncomeAmount).toBe(expected)
+            }
+        )
+    })
+    describe("課税対象金額が9,000,000円 ~ 17,999,000円", () => {
+        test.each`
+        taxationTargetAmount | expected
+        ${9_000_000} | ${1_434_000}
+        ${13_500_000} | ${2_919_000}
+        ${17_999_000} | ${4_403_670}
+        `(
+            `課税対象金額：$taxationTargetAmount, 期待値：$expected`,
+                ({taxationTargetAmount, expected})=> {
+                    const baseIncomeAmount = calcBaseIncomeAmount(taxationTargetAmount);
+                    expect(baseIncomeAmount).toBe(expected)
+            }
+        )
+    })
+    describe("課税対象金額が18,000,000円 ~ 39,999,000円", () => {
+        test.each`
+        taxationTargetAmount | expected
+        ${18_000_000} | ${4_404_000}
+        ${29_000_000} | ${8_804_000}
+        ${39_999_000} | ${13_203_600}
+        `(
+            `課税対象金額：$taxationTargetAmount, 期待値：$expected`,
+                ({taxationTargetAmount, expected})=> {
+                    const baseIncomeAmount = calcBaseIncomeAmount(taxationTargetAmount);
+                    expect(baseIncomeAmount).toBe(expected)
+            }
+        )
+    })
+    describe("課税対象金額が40,000,000円 ~", () => {
+        test.each`
+        taxationTargetAmount | expected
+        ${40_000_000} | ${13_204_000}
+        ${60_000_000} | ${22_204_000}
+        `(
+            `課税対象金額：$taxationTargetAmount, 期待値：$expected`,
+                ({taxationTargetAmount, expected})=> {
+                    const baseIncomeAmount = calcBaseIncomeAmount(taxationTargetAmount);
+                    expect(baseIncomeAmount).toBe(expected)
+            }
+        )
     })
 })

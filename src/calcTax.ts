@@ -57,3 +57,24 @@ export const calcTaxationTargetAmount = (input: calcTaxationTargetAmountInput) =
     targetAmount = Math.floor(targetAmount / 1000) * 1000;
     return targetAmount;
 } 
+
+//基準所得税額算出
+export const calcBaseIncomeAmount = (taxationTargetAmount: number) => {
+    //税率・控除額のグループリスト
+    const taxGroups = [{taxRate: 0.05, fixedDeduction: 0}, {taxRate: 0.1, fixedDeduction: 97_500},{taxRate: 0.2, fixedDeduction: 427_500},{taxRate: 0.23, fixedDeduction: 636_000},{taxRate: 0.33, fixedDeduction: 1_536_000},{taxRate: 0.4, fixedDeduction: 2_796_000},{taxRate: 0.45, fixedDeduction: 4_796_000}] 
+    if (1_000 <= taxationTargetAmount && taxationTargetAmount <= 1_949_000) {
+        return taxationTargetAmount * taxGroups[0].taxRate - taxGroups[0].fixedDeduction;
+    } else if (1_950_000 <= taxationTargetAmount && taxationTargetAmount <= 3_299_000) {
+        return taxationTargetAmount * taxGroups[1].taxRate - taxGroups[1].fixedDeduction;
+    } else if (3_300_000 <= taxationTargetAmount && taxationTargetAmount <= 6_949_000) {
+        return taxationTargetAmount * taxGroups[2].taxRate - taxGroups[2].fixedDeduction;
+    } else if (6_950_000 <= taxationTargetAmount && taxationTargetAmount <= 8_999_000) {
+        return taxationTargetAmount * taxGroups[3].taxRate - taxGroups[3].fixedDeduction;
+    } else if (9_000_000 <= taxationTargetAmount && taxationTargetAmount <= 17_999_000) {
+        return taxationTargetAmount * taxGroups[4].taxRate - taxGroups[4].fixedDeduction;
+    } else if (18_000_000 <= taxationTargetAmount && taxationTargetAmount <= 39_999_000) {
+        return taxationTargetAmount * taxGroups[5].taxRate - taxGroups[5].fixedDeduction;
+    } else if (40_000_000 <= taxationTargetAmount) {
+        return taxationTargetAmount * taxGroups[6].taxRate - taxGroups[6].fixedDeduction;
+    }
+}
